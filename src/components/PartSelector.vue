@@ -2,7 +2,7 @@
   <Combobox as="div" v-model="part">
     <div class="relative mt-2 flex -space-x-px">
       <div class="w-1/2 min-w-0 flex-1">
-        <input type="number" class="relative block w-full rounded-none rounded-l-md border-0 bg-transparent py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-1 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3" v-model="amount" placeholder="Enter Amount..." />
+        <input type="number" class="relative block w-full rounded-none rounded-l-md border-0 bg-transparent py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-1 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-3" v-model="amountInput" placeholder="Enter Amount..." />
       </div>
       <div class="min-w-0 flex-grow">
         <ComboboxInput as="input" placeholder="Select Part..." class="relative block w-full rounded-none rounded-r-md border-0 bg-transparent py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-3 pr-10" @change="query = $event.target.value" @focus="onFocus($event)" @blur="onBlur()" />
@@ -51,6 +51,20 @@
     .reduce((set, x) => set.concat(x.inputs.map(x => x.part)).concat(x.outputs.map(x => x.part)), [] as Part[])
     .filter((x, i, a) => a.indexOf(x) === i);
   const query = ref('');
+
+  const amountInput = computed({
+    set: (val: string | number) => {
+      if (amount !== undefined) {
+        if (typeof val === 'number')
+          amount.value = val;
+        else if (val.length > 0)
+          amount.value = parseInt(val);
+        else
+          amount.value = undefined;
+      }
+    },
+    get: () => amount?.value?.toString() ?? ''
+  })
 
   const filteredParts = computed(() =>
   query.value === ''

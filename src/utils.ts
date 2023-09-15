@@ -75,7 +75,28 @@ export const calculateRecipeAmounts = (recipe: Recipe, amount: number, level: nu
 export const calculateInputs = (recipe: Recipe, amount: number): RecipeProcess[] => {
   const parts = calculateRecipeAmounts(recipe, amount);
   const recipes = findAllRecipes(recipe);
-  return parts.filter(x => recipes.findIndex(y => y.outputs[0].part === x.part) === -1);
+  return parts
+    .filter(x => recipes.findIndex(y => y.outputs[0].part === x.part) === -1)
+    .map(x => ({ part: x.part, amountPerMinute: Math.ceil(x.amountPerMinute) }));
+}
+
+export const calculateExcess = (recipe: Recipe, amount: number): RecipeProcess[] => {
+  const parts = calculateRecipeAmounts(recipe, amount);
+  const recipes = findAllRecipes(recipe);
+  const machines = calculateMachines(recipe, amount);
+  
+  return parts
+    .map(x => {
+      const item = recipes.find(y => y.outputs[0].part === x.part);
+      const machine = machines.find(y => y.recipe.outputs[0].part === x.part);
+
+      if (item === undefined || machine === undefined)
+        return { part: x.part, amountPerMinute: 0 } as RecipeProcess;
+
+      return { part: x.part, amountPerMinute: (machine.amount * machine.recipe.outputs[0].amountPerMinute) - x.amountPerMinute };
+    })
+    .filter(x => x.amountPerMinute > 0)
+    .map(x => ({ part: x.part, amountPerMinute: Math.floor(x.amountPerMinute) }));
 }
 
 export const mergeMachines = (counts: RecipeCounts[]): MachineCounts[] => {

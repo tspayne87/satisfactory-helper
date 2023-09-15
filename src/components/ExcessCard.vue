@@ -1,7 +1,7 @@
 <template>
-  <li class="overflow-hidden rounded-xl border border-gray-200" v-if="recipe !== undefined">
+  <li class="overflow-hidden rounded-xl border border-gray-200" v-if="recipe !== undefined && inputs.length > 0">
     <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
-      <div class="text-sm font-medium leading-6 text-gray-900">Inputs</div>
+      <div class="text-sm font-medium leading-6 text-gray-900">Excess</div>
     </div>
     <dl class="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
       <div v-for="item in inputs" class="flex justify-between gap-x-4 py-3">
@@ -16,11 +16,11 @@
 
 <script setup lang="ts">
   import { computed } from 'vue';
-  import { calculateInputs, formatNumber } from '../utils';
+  import { calculateExcess, formatNumber } from '../utils';
 
   import type { Recipe } from '../types';
 
   const props = defineProps<{ recipe?: Recipe, amount?: number }>();
 
-  const inputs = computed(() => props.recipe !== undefined ? calculateInputs(props.recipe, props.amount ?? props.recipe.outputs[0].amountPerMinute) : []);
+  const inputs = computed(() => props.recipe !== undefined ? calculateExcess(props.recipe, props.amount ?? props.recipe.outputs[0].amountPerMinute) : []);
 </script>
