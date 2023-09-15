@@ -14,4 +14,15 @@ export interface Recipe {
 export interface RecipeProcess {
   part: Part;
   amountPerMinute: number;
+  level?: number;
+}
+
+export interface RecipeCounts {
+  recipe: Recipe;
+  amount: number;
+}
+
+export interface MachineCounts {
+  machine: Machine;
+  amount: number;
 }
